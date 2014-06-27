@@ -1,0 +1,16 @@
+{
+  "name": "realtime-web-tasks",
+  "description": "Goodow Realtime Web Tasks helps you to try out the features of the Goodow Realtime Store API",
+  "version": "0.0.0",
+  "homepage": "https://github.com/goodow/realtime-web-tasks",
+  "dependencies": {
+    "realtime-store": "gh-pages",
+    "jquery": "1.9",
+    "angular": "~1.0.5",
+    "todomvc-common": "0.1.2"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.0.5",
+    "angular-scenario": "~1.0.5"
+  }
+}
