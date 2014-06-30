@@ -88,12 +88,12 @@ angular.module('todos').directive('collaborative',
 
       this.unbind = function () {
         console.log('Removing listeners');
-        this.string.removeEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, this._insertListener);
-        this.string.removeEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, this._deleteListener);
+        textInsertRegistration.unregister();
+        textDeleteRegistration.unregister();
       };
 
-      this.string.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, this._insertListener);
-      this.string.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, this._deleteListener);
+      var textInsertRegistration = this.string.onTextInserted(this._insertListener);
+      var textDeleteRegistration = this.string.onTextDeleted(this._deleteListener);
     };
 
     return {

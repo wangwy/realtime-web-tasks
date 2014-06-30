@@ -40,7 +40,7 @@ app.Todo = function () {
  * @param title
  */
 app.Todo.prototype.initialize = function (title) {
-  var model = gapi.drive.realtime.custom.getModel(this);
+  var model = realtime.store.custom.getModel(this);
   this.title = model.createString(title);
   this.completed = false;
 };
@@ -119,16 +119,16 @@ gapi.load('auth:client:drive-share:drive-realtime', function () {
   gapi.auth.init();
 
   // Monkey patch collaborative string for ng-model compatibility
-  Object.defineProperty(gapi.drive.realtime.CollaborativeString.prototype, 'text', {
-    set: gapi.drive.realtime.CollaborativeString.prototype.setText,
-    get: gapi.drive.realtime.CollaborativeString.prototype.getText
+  Object.defineProperty(realtime.store.CollaborativeString.prototype, 'text', {
+    set: realtime.store.CollaborativeString.prototype.setText,
+    get: realtime.store.CollaborativeString.prototype.getText
   });
 
   // Register our Todo class
-  app.Todo.prototype.title = gapi.drive.realtime.custom.collaborativeField('title');
-  app.Todo.prototype.completed = gapi.drive.realtime.custom.collaborativeField('completed');
-  gapi.drive.realtime.custom.registerType(app.Todo, 'todo');
-  gapi.drive.realtime.custom.setInitializer(app.Todo, app.Todo.prototype.initialize);
+  app.Todo.prototype.title = realtime.store.custom.collaborativeField('title');
+  app.Todo.prototype.completed = realtime.store.custom.collaborativeField('completed');
+  realtime.store.custom.registerType(app.Todo, 'todo');
+  realtime.store.custom.setInitializer(app.Todo, app.Todo.prototype.initialize);
 
   $(document).ready(function () {
     angular.bootstrap(document, ['todos']);

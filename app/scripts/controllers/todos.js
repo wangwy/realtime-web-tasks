@@ -113,14 +113,14 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
       { completed: false } : (filter === 'completed') ?
       { completed: true } : null;
     });
-    
+
     /**
     * Undo local changes
     */
     $scope.undo = function () {
       realtimeDocument.getModel().undo();
     };
-    
+
     /**
     * Check if there are undoable changes.
     * @returns {boolean}
@@ -135,7 +135,7 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
     $scope.redo = function () {
       realtimeDocument.getModel().redo();
     };
-    
+
     /**
     * Check if there are redoable changes.
     * @returns {boolean}
@@ -165,14 +165,14 @@ angular.module('todos').controller('CollaboratorsCtrl', ['$scope', 'config',
     };
     $scope.collaborators = $scope.realtimeDocument.getCollaborators();
 
-    $scope.realtimeDocument.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, collaboratorListener);
-    $scope.realtimeDocument.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, collaboratorListener);
+    var collaboratorLeftRegistration = $scope.realtimeDocument.onCollaboratorLeft(collaboratorListener);
+    var collaboratorJoinedRegistration = $scope.realtimeDocument.onCollaboratorJoined(collaboratorListener);
 
     $scope.$on('$destroy', function () {
       var doc = $scope.realtimeDocument;
       if (doc) {
-        doc.removeEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, collaboratorListener);
-        doc.removeEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, collaboratorListener);
+        collaboratorLeftRegistration.unregister();
+        collaboratorJoinedRegistration.unregister();
       }
     });
 

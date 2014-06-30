@@ -130,17 +130,17 @@ angular.module('todos').service('storage', ['$q', '$rootScope', 'config',
         $rootScope.$digest();
       }.bind(this);
       var onError = function (error) {
-        if (error.type === gapi.drive.realtime.ErrorType.TOKEN_REFRESH_REQUIRED) {
+        if (error.type === realtime.store.ErrorType.TOKEN_REFRESH_REQUIRED) {
           $rootScope.$emit('todos.token_refresh_required');
-        } else if (error.type === gapi.drive.realtime.ErrorType.CLIENT_ERROR) {
+        } else if (error.type === realtime.store.ErrorType.CLIENT_ERROR) {
           $rootScope.$emit('todos.client_error');
-        } else if (error.type === gapi.drive.realtime.ErrorType.NOT_FOUND) {
+        } else if (error.type === realtime.store.ErrorType.NOT_FOUND) {
           deferred.reject(error);
           $rootScope.$emit('todos.not_found', id);
         }
         $rootScope.$digest();
       };
-      gapi.drive.realtime.load(id, onLoad, initialize, onError);
+      realtime.store.load(id, onLoad, initialize, onError);
       return deferred.promise;
     };
 
@@ -156,9 +156,7 @@ angular.module('todos').service('storage', ['$q', '$rootScope', 'config',
     };
 
     this.setDocument = function (id, document) {
-      document.getModel().getRoot().addEventListener(
-        gapi.drive.realtime.EventType.OBJECT_CHANGED,
-        this.changeListener);
+      document.getModel().getRoot().onObjectChanged(this.changeListener)
       this.document = document;
       this.id = id;
     };
