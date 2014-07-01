@@ -39,13 +39,13 @@ angular.module('todos').directive('collaborative',
       this.scope = scope;
 
       this._insertListener = angular.bind(this, function (event) {
-        if (!event.isLocal) {
-          this.updateText(event.index, event.text.length);
+        if (!event.isLocal()) {
+          this.updateText(event.index(), event.text().length);
         }
       });
       this._deleteListener = angular.bind(this, function (event) {
-        if (!event.isLocal) {
-          this.updateText(event.index, -event.text.length);
+        if (!event.isLocal()) {
+          this.updateText(event.index(), -event.text().length);
         }
       });
       this.updateText = function (position, size) {

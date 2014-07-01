@@ -150,7 +150,7 @@ angular.module('todos').service('storage', ['$q', '$rootScope', 'config',
      * @param event
      */
     this.changeListener = function (event) {
-      if (!event.isLocal) {
+      if (!event.isLocal()) {
         $rootScope.$digest();
       }
     };

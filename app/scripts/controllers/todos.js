@@ -126,7 +126,7 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
     * @returns {boolean}
     */
     $scope.canUndo = function () {
-      return realtimeDocument.getModel().canUndo;
+      return realtimeDocument.getModel().canUndo();
     };
 
     /**
@@ -141,7 +141,7 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
     * @returns {boolean}
     */
     $scope.canRedo = function () {
-      return realtimeDocument.getModel().canRedo;
+      return realtimeDocument.getModel().canRedo();
     };
   }]
 );
