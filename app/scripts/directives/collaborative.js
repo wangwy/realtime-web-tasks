@@ -88,12 +88,11 @@ angular.module('todos').directive('collaborative',
 
       this.unbind = function () {
         console.log('Removing listeners');
-        textInsertRegistration.unregister();
-        textDeleteRegistration.unregister();
+        /*textInsertRegistration.unregister();
+        textDeleteRegistration.unregister();*/
       };
-
-      var textInsertRegistration = this.string.onTextInserted(this._insertListener);
-      var textDeleteRegistration = this.string.onTextDeleted(this._deleteListener);
+      /*var textInsertRegistration = this.string.onTextInserted(this._insertListener);
+      var textDeleteRegistration = this.string.onTextDeleted(this._deleteListener);*/
     };
 
     return {
@@ -102,25 +101,25 @@ angular.module('todos').directive('collaborative',
       require: 'ngModel',
       compile: function (tElement, tAttrs) {
         var expression = tAttrs.ngModel.replace(/\.text$/, '');
-        if (expression === tAttrs.ngModel) {
+        /*if (expression === tAttrs.ngModel) {
           console.log('Model does not appear to be collaborative string. Bind ng-model to .text property');
           return null;
-        }
+        }*/
         return function (scope, iElement, iAttrs, controller) {
-          scope.$watch(expression, function (newValue) {
-            if (scope.binder) {
-              scope.binder.unbind();
-            }
-            if (newValue) {
-              scope.binder = new TextBinder(scope, iElement, newValue, controller);
-            }
-          });
-          scope.$on('$destroy', function () {
-            if (scope.binder) {
-              scope.binder.unbind();
-              scope.binder = null;
-            }
-          });
+//          scope.$watch(expression, function (newValue) {
+//            if (scope.binder) {
+//              scope.binder.unbind();
+//            }
+//            if (newValue) {
+//              scope.binder = new TextBinder(scope, iElement, newValue, controller);
+//            }
+//          });
+//          scope.$on('$destroy', function () {
+//            if (scope.binder) {
+//              scope.binder.unbind();
+//              scope.binder = null;
+//            }
+//          });
         };
       }
     };
