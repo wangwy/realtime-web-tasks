@@ -12,15 +12,8 @@
  * limitations under the License.
  */
 
-'use strict';
-
 var CONFIG = {
-  clientId: '502747173299.apps.googleusercontent.com',
-  apiKey: 'AIzaSyA8uaDCmQ1mvhjXQZvF55vW9ygO_fAYKRs',
-  scopes: [
-    'https://www.googleapis.com/auth/drive.file',
-    'https://www.googleapis.com/auth/drive.install'
-  ]
+  SERVER:'http://realtime.goodow.com:1986/channel'
 };
 
 var app = {};
@@ -45,23 +38,23 @@ app.Todo.prototype.initialize = function (title) {
   this.completed = false;
 };
 
-
 /**
  * Loads the document. Used to inject the collaborative document
  * into the main controller.
  *
- * @param $route
  * @param storage
  * @returns {*}
  */
-app.loadFile = function ($route, storage) {
-  var id = $route.current.params.fileId;
-  var userId = $route.current.params.user;
-  return storage.requireAuth(true, userId).then(function () {
-    return storage.getDocument(id);
-  });
+app.loadFile = function (storage,$route) {
+  var id = $route.current.params.id;
+  if(!id){
+    id = 0;
+  }
+  app.id = 'tasks/'+id;
+  return storage.getDocument(app.id);
 };
-app.loadFile.$inject = ['$route', 'storage'];
+
+app.loadFile.$inject = ['storage','$route'];
 
 /**
  * Initialize our application routes
@@ -69,68 +62,19 @@ app.loadFile.$inject = ['$route', 'storage'];
 app.module.config(['$routeProvider',
   function ($routeProvider) {
     $routeProvider
-      .when('/todos/:fileId/:filter', {
+      .when('/todos/:id/:filter', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         resolve: {
           realtimeDocument: app.loadFile
         }
       })
-      .when('/create', {
-        templateUrl: 'views/loading.html',
-        controller: 'CreateCtrl'
-      })
-      .when('/install', {
-        templateUrl: 'views/install.html',
-        controller: 'InstallCtrl'
-      })
-      .otherwise({
-        redirectTo: '/install'
-      });
+        .otherwise({redirectTo:'/todos/0/all'})
   }]
 );
 
-app.module.value('config', CONFIG);
+app.module.value('config',CONFIG);
 
-/**
- * Set up handlers for various authorization issues that may arise if the access token
- * is revoked or expired.
- */
-app.module.run(['$rootScope', '$location', 'storage', function ($rootScope, $location, storage) {
-  // Error loading the document, likely due revoked access. Redirect back to home/install page
-  $rootScope.$on('$routeChangeError', function () {
-    $location.url('/install?target=' + encodeURIComponent($location.url()));
-  });
-
-  // Token expired, refresh
-  $rootScope.$on('todos.token_refresh_required', function () {
-    storage.requireAuth(true).then(function () {
-      // no-op
-    }, function () {
-      $location.url('/install?target=' + encodeURIComponent($location.url()));
-    });
-  });
-}]);
-
-/**
- * Bootstrap the app
- */
-gapi.load('auth:client:drive-share:drive-realtime', function () {
-  gapi.auth.init();
-
-  // Monkey patch collaborative string for ng-model compatibility
-  Object.defineProperty(realtime.store.CollaborativeString.prototype, 'text', {
-    set: realtime.store.CollaborativeString.prototype.setText,
-    get: realtime.store.CollaborativeString.prototype.getText
-  });
-
-  // Register our Todo class
-  app.Todo.prototype.title = realtime.store.custom.collaborativeField('title');
-  app.Todo.prototype.completed = realtime.store.custom.collaborativeField('completed');
-  realtime.store.custom.registerType(app.Todo, 'todo');
-  realtime.store.custom.setInitializer(app.Todo, app.Todo.prototype.initialize);
-
-  $(document).ready(function () {
-    angular.bootstrap(document, ['todos']);
-  });
+$(document).ready(function () {
+  angular.bootstrap(document, ['todos']);
 });

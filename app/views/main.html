@@ -4,7 +4,6 @@
          alt="{{collaborator.displayName()}}"
          title="{{collaborator.displayName()}}"
          ng-style="{'background-color': collaborator.color()}">
-    <button ng-click="share()" id="share">Share</button>
 </section>
 
 <section id="todoapp">
@@ -14,18 +13,18 @@
             <input id="new-todo" placeholder="What needs to be done?" ng-model="newTodo" autofocus>
         </form>
     </header>
-    <section id="main" ng-show="todos.length" ng-cloak>
+    <section id="main" ng-show="todos.length()" ng-cloak>
         <input id="toggle-all" type="checkbox" ng-model="allChecked" ng-click="markAll(allChecked)">
         <label for="toggle-all">Mark all as complete</label>
         <ul id="todo-list">
             <li ng-repeat="todo in todos.asArray() | filter:statusFilter" ng-class="{completed: todo.completed, editing: todo == editedTodo}">
                 <div class="view">
                     <input class="toggle" type="checkbox" ng-model="todo.completed">
-                    <label ng-dblclick="editTodo(todo)">{{todo.title.text}}</label>
+                    <label ng-dblclick="editTodo(todo)">{{todo.title}}</label>
                     <button class="destroy" ng-click="removeTodo(todo)"></button>
                 </div>
-                <form ng-submit="doneEditing(todo)">
-                    <input class="edit" ng-model="todo.title.text" collaborative on-blur="doneEditing()" focus="todo == editedTodo">
+                <form ng-submit="doneEditing()">
+                    <input class="edit" ng-model="todo.title" collaborative on-blur="doneEditing()" focus="todo == editedTodo">
                 </form>
             </li>
         </ul>
@@ -36,18 +35,18 @@
       </span>
         <ul id="filters">
             <li>
-                <a ng-class="{selected: filter == ''} " data-ng-href="#/todos/{{fileId}}/">All</a>
+                <a ng-class="{selected: filter == ''} " data-ng-href="#/todos/{{id}}/all">All</a>
             </li>
             <li>
-                <a ng-class="{selected: filter == 'active'}" data-ng-href="#/todos/{{fileId}}/active">Active</a>
+                <a ng-class="{selected: filter == 'active'}" data-ng-href="#/todos/{{id}}/active">Active</a>
             </li>
             <li>
-                <a ng-class="{selected: filter == 'completed'}" data-ng-href="#/todos/{{fileId}}/completed">Completed</a>
+                <a ng-class="{selected: filter == 'completed'}" data-ng-href="#/todos/{{id}}/completed">Completed</a>
             </li>
         </ul>
         <button id="undo" ng-click="undo()" ng-show="canUndo()">Undo</button>
         <button id="redo" ng-click="redo()" ng-show="canRedo()">Redo</button>
-        <button id="clear-completed" ng-click="clearDoneTodos()" ng-show="remainingCount() < todos.length">Clear completed ({{todos.length - remainingCount()}})</button>
+        <button id="clear-completed" ng-click="clearDoneTodos()" ng-show="remainingCount() < todos.length()">Clear completed ({{todos.length() - remainingCount()}})</button>
     </footer>
 </section>
 <footer id="info">

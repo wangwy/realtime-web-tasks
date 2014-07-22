@@ -14,7 +14,7 @@
 
 'use strict';
 
-angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realtimeDocument',
+angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realtimeDocument', '$timeout',
   /**
    * Controller for editing the tasks lists
    *
@@ -23,14 +23,16 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
    * @param document
    * @constructor
    */
-  function ($scope, $routeParams, realtimeDocument) {
-    $scope.fileId = $routeParams.fileId;
+  function ($scope, $routeParams, realtimeDocument,$timeout) {
+    $scope.id = $routeParams.id;
+
     $scope.filter = $routeParams.filter;
 
     $scope.realtimeDocument = realtimeDocument;
-    $scope.todos = realtimeDocument.getModel().getRoot().get('todos');
-    $scope.newTodo = '';
 
+    $scope.todos = realtimeDocument.getModel().getRoot().get('todos');
+
+    $scope.newTodo = '';
 
     /**
      * Count the number of incomplete todo items.
@@ -40,7 +42,7 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
     $scope.remainingCount = function () {
       var remaining = 0;
       angular.forEach(this.todos.asArray(), function (todo) {
-        remaining += todo.completed ? 0 : 1;
+        remaining += Boolean(todo.completed) ? 0 : 1;
       });
       return remaining;
     };
@@ -50,11 +52,13 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
      */
     $scope.addTodo = function () {
       if (this.newTodo) {
-        realtimeDocument.getModel().beginCompoundOperation();
-        var todo = realtimeDocument.getModel().create(app.Todo, this.newTodo);
+//        realtimeDocument.getModel().beginCompoundOperation();
+        var todo = realtimeDocument.getModel().create('todo', this.newTodo);
+        todo.title = this.newTodo;
+        todo.completed = false;
         this.newTodo = '';
         this.todos.push(todo);
-        realtimeDocument.getModel().endCompoundOperation();
+//        realtimeDocument.getModel().endCompoundOperation();
       }
     };
 
@@ -68,7 +72,7 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
     /**
      * Cancel editing.
      */
-    $scope.doneEditing = function () {
+    $scope.doneEditing = function (title) {
       $scope.editedTodo = null;
     };
 
@@ -86,13 +90,13 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
      */
     $scope.clearDoneTodos = function () {
       var todos = this.todos;
-      realtimeDocument.getModel().beginCompoundOperation();
+//      realtimeDocument.getModel().beginCompoundOperation();
       angular.forEach(this.todos.asArray(), function (todo) {
         if (todo.completed) {
           todos.removeValue(todo);
         }
       });
-      realtimeDocument.getModel().endCompoundOperation();
+//      realtimeDocument.getModel().endCompoundOperation();
     };
 
     /**
@@ -101,11 +105,12 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
      * @param done
      */
     $scope.markAll = function (done) {
-      realtimeDocument.getModel().beginCompoundOperation();
+//      realtimeDocument.getModel().beginCompoundOperation();
       angular.forEach(this.todos.asArray(), function (todo) {
+//        todo.set('completed',done);
         todo.completed = done;
       });
-      realtimeDocument.getModel().endCompoundOperation();
+//      realtimeDocument.getModel().endCompoundOperation();
     };
 
     $scope.$watch('filter', function (filter) {
@@ -146,17 +151,15 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
   }]
 );
 
-angular.module('todos').controller('CollaboratorsCtrl', ['$scope', 'config',
+angular.module('todos').controller('CollaboratorsCtrl', ['$scope',
   /**
    * Controller for displaying the list of current collaborators. Expects
    * to inherit the document from a parent scope.
    *
    * @param {angular.Scope} $scope
-   * @param {object} config
    * @constructor
    */
-  function ($scope, config) {
-    var appId = config.clientId.split('.').shift();
+  function ($scope) {
 
     var collaboratorListener = function () {
       $scope.$apply(function () {
@@ -175,13 +178,6 @@ angular.module('todos').controller('CollaboratorsCtrl', ['$scope', 'config',
         collaboratorJoinedRegistration.unregister();
       }
     });
-
-    $scope.share = function () {
-      var fileId = this.fileId;
-      var client = new gapi.drive.share.ShareClient(appId);
-      client.setItemIds([fileId]);
-      client.showSettingsDialog();
-    };
 
   }]
 );

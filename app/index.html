@@ -18,40 +18,31 @@
     <![endif]-->
 
     <!--[if lt IE 9]>
-      <script src="components/es5-shim/es5-shim.js"></script>
-      <script src="components/json3/lib/json3.min.js"></script>
+      <script src="bower_components/es5-shim/es5-shim.js"></script>
+      <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
-
     <!-- Add your site or application content here -->
-<!--    <div class="container" data-ng-view></div> -->
+    <!--    <div class="container" data-ng-view></div> -->
     <section data-ng-view></section>
-
-
-    <script src="//apis.google.com/js/client:plusone.js"></script>
-    <script src="//apis.google.com/js/api.js"></script>
-
-    <script src="components/jquery/jquery.js"></script>
-    <script src="components/angular/angular.js"></script>
-
-    <!-- build:js scripts/scripts.js -->
+    <script src="bower_components/bower-sockjs-client/sockjs.js"></script>
+    <script src="bower_components/realtime-store/realtime.store.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/realtime.store.custom.js"></script>
+    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/services/storage.js"></script>
     <script src="scripts/directives/on-blur.js"></script>
     <script src="scripts/directives/collaborative.js"></script>
     <script src="scripts/directives/focus.js"></script>
-
-    <script src="scripts/controllers/install.js"></script>
-    <script src="scripts/controllers/create.js"></script>
     <script src="scripts/controllers/todos.js"></script>
     <!-- endbuild -->
 
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID.
     <script>
-      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+      var _gaq=[['_setAccount','UA-52163425-1'],['_trackPageview']];
       (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
       g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
       s.parentNode.insertBefore(g,s)}(document,'script'));
     </script>
-     -->
   </body>
 </html>
