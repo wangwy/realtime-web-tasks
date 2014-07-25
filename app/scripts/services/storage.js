@@ -49,68 +49,7 @@ angular.module('todos').service('storage', ['$q', '$rootScope', 'config',
         this.closeDocument();
       }
       return this.load(id);
-    };
-
-    /**
-     * Creates a new document.
-     *
-     * @param title
-     * @returns {angular.$q.promise}
-     */
-    this.createDocument = function (title) {
-      var deferred = $q.defer();
-      var onComplete = function (result) {
-        if (result && !result.error) {
-          deferred.resolve(result);
-        } else {
-          deferred.reject(result);
-        }
-        $rootScope.$digest();
       };
-      gapi.client.request({
-        'path': '/drive/v2/files',
-        'method': 'POST',
-        'body': JSON.stringify({
-          title: title,
-          mimeType: 'application/vnd.google-apps.drive-sdk'
-        })
-      }).execute(onComplete);
-      return deferred.promise;
-    };
-
-    /**
-     * Checks to make sure the user is currently authorized and the access
-     * token hasn't expired.
-     *
-     * @param immediateMode
-     * @param userId
-     * @returns {angular.$q.promise}
-     */
-    this.requireAuth = function (immediateMode, userId) {
-      /* jshint camelCase: false */
-      var token = gapi.auth.getToken();
-      var now = Date.now() / 1000;
-      if (token && ((token.expires_at - now) > (60))) {
-        return $q.when(token);
-      } else {
-        var params = {
-          'client_id': config.clientId,
-          'scope': config.scopes,
-          'immediate': immediateMode,
-          'user_id': userId
-        };
-        var deferred = $q.defer();
-        gapi.auth.authorize(params, function (result) {
-          if (result && !result.error) {
-            deferred.resolve(result);
-          } else {
-            deferred.reject(result);
-          }
-          $rootScope.$digest();
-        });
-        return deferred.promise;
-      }
-    };
 
     /**
      * Actually load a document. If the document is new, initializes
@@ -120,6 +59,7 @@ angular.module('todos').service('storage', ['$q', '$rootScope', 'config',
      * @returns {angular.$q.promise}
      */
     this.load = function (id) {
+      init();
       var deferred = $q.defer();
       var initialize = function (model) {
         model.getRoot().set('todos', model.createList());
@@ -140,7 +80,8 @@ angular.module('todos').service('storage', ['$q', '$rootScope', 'config',
         }
         $rootScope.$digest();
       };
-      realtime.store.load(id, onLoad, initialize, onError);
+      var store = new realtime.store.StoreImpl(config.SERVER, null);
+      store.load(id, onLoad, initialize, onError);
       return deferred.promise;
     };
 
