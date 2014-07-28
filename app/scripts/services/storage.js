@@ -59,7 +59,6 @@ angular.module('todos').service('storage', ['$q', '$rootScope', 'config',
      * @returns {angular.$q.promise}
      */
     this.load = function (id) {
-      init();
       var deferred = $q.defer();
       var initialize = function (model) {
         model.getRoot().set('todos', model.createList());

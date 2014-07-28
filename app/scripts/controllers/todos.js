@@ -51,8 +51,6 @@ angular.module('todos').controller('MainCtrl', ['$scope', '$routeParams', 'realt
     $scope.addTodo = function () {
       if (this.newTodo) {
         var todo = realtimeDocument.getModel().create('todo', this.newTodo);
-        todo.title = this.newTodo;
-        todo.completed = false;
         this.newTodo = '';
         this.todos.push(todo);
       }

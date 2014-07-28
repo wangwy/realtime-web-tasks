@@ -22,7 +22,7 @@
     return obj.mapId;
   };
   realtime.store.custom.getModel = function(obj){
-    realtime.store.custom.objectRelationShips[this.getId(obj)]
+    return realtime.store.custom.objectRelationShips[this.getId(obj)]['model']
 //    return obj.getModel();
   };
   realtime.store.custom.isCustomObject = function(obj){
@@ -31,5 +31,18 @@
     if(obj.id && this.registTypes[obj.id])
       return true;
     return false;
+  };
+  realtime.store.custom.setInitializer = function(obj,fn){
+    var name = obj;
+    if((typeof obj).toLowerCase().trim() === 'function'){
+      for(var prop in this.registTypes){
+        if(this.registTypes[prop].type === obj){
+          name = prop;
+          break;
+        }
+      }
+      throw new Error("you must regist this type first");
+    }
+    this.registTypes[name]['initializer'] = fn;
   };
 })();

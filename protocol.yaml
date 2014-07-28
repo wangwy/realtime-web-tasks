@@ -1,7 +1,7 @@
 # id:tasks/1
 ---
 todos:
-  - # leaf 列表里的数据
+  - # 列表里的数据
     title: tasks
     completed: true
 ...

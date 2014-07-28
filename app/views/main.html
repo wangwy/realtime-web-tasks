@@ -20,11 +20,11 @@
             <li ng-repeat="todo in todos.asArray() | filter:statusFilter" ng-class="{completed: todo.completed, editing: todo == editedTodo}">
                 <div class="view">
                     <input class="toggle" type="checkbox" ng-model="todo.completed">
-                    <label ng-dblclick="editTodo(todo)">{{todo.title}}</label>
+                    <label ng-dblclick="editTodo(todo)">{{todo.title.text}}</label>
                     <button class="destroy" ng-click="removeTodo(todo)"></button>
                 </div>
                 <form ng-submit="doneEditing(todo)">
-                    <input class="edit" ng-model="todo.title" on-blur="doneEditing()" focus="todo == editedTodo">
+                    <input class="edit" ng-model="todo.title.text" collaborative on-blur="doneEditing()" focus="todo == editedTodo">
                 </form>
             </li>
         </ul>
@@ -35,7 +35,7 @@
       </span>
         <ul id="filters">
             <li>
-                <a ng-class="{selected: filter == ''} " data-ng-href="#/todos/{{id}}/all">All</a>
+                <a ng-class="{selected: filter == ''} " data-ng-href="#/todos/{{id}}/">All</a>
             </li>
             <li>
                 <a ng-class="{selected: filter == 'active'}" data-ng-href="#/todos/{{id}}/active">Active</a>

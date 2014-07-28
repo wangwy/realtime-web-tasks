@@ -74,7 +74,7 @@ app.module.config(['$routeProvider',
         }
       })
       .otherwise({
-        redirectTo: '/todos/0/all'
+        redirectTo: '/todos/0/'
       });
   }]
 );
@@ -84,7 +84,13 @@ app.module.value('config', CONFIG);
   realtime.store.custom.registerType(app.Todo, 'todo');
   app.Todo.prototype.title = realtime.store.custom.collaborativeField('title');
   app.Todo.prototype.completed = realtime.store.custom.collaborativeField('completed');
+  realtime.store.custom.setInitializer('todo', app.Todo.prototype.initialize);
 
   $(document).ready(function () {
+    Object.defineProperty(realtime.store.CollaborativeString.prototype, 'text', {
+      set: realtime.store.CollaborativeString.prototype.setText,
+      get: realtime.store.CollaborativeString.prototype.getText
+    });
+    init();
     angular.bootstrap(document, ['todos']);
   });

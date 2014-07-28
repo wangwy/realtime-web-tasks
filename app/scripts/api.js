@@ -13,17 +13,33 @@ function init(){
     _constructor.prototype.constructor = _constructor;
     var custom_object = new _constructor();
     var c_map = this.createMap();
-    var name = custom_object.id;
-//    console.log('Name#####################'+name);
     var id = c_map.id();
+    var name = custom_object.id;
     c_map.set(id, name);
+    custom_object.mapId = id;
+    var relations = realtime.store.custom.objectRelationShips[id] = {};
+    relations['map'] = c_map;
+    relations['model'] = this;
+    var initializer = realtime.store.custom.registTypes[name]['initializer'];
+    if(initializer){
+      var args = [];
+      for(var i=1;i<arguments.length;i++){
+        args.push(arguments[i]);
+      }
+      initializer.apply(custom_object,args);
+    }
+//    console.log('Name#####################'+name);
     for (var i = 0; i < realtime.store.custom.fields.length; i++) {
       var prop = realtime.store.custom.fields[i];
-      c_map.set(prop, "");
+      if(typeof custom_object[prop] !== "undefined"){
+        c_map.set(prop, custom_object[prop]);
+      }else{
+        c_map.set(prop, "");
+      }
       (function (__key,_c_map) {
         Object.defineProperty(custom_object, __key, {
           get: function () {
-            var value = _c_map.get(__key).toString();
+            var value = _c_map.get(__key);
             if(value === 'true')
               return true;
             if(value === 'false')
@@ -31,7 +47,7 @@ function init(){
             return value;
           },
           set: function (value) {
-            var value_ = _c_map.get(__key).toString();
+            var value_ = _c_map.get(__key);
             if(value_ === 'true')
               value_ = true;
             if(value_ === 'false')
@@ -44,10 +60,6 @@ function init(){
         });
       })(prop,c_map)
     }
-    custom_object.mapId = id;
-    var relations = realtime.store.custom.objectRelationShips[id] = {};
-    relations['map'] = c_map;
-    relations['model'] = this;
     return custom_object;
   }
   var setFn = realtime.store.CollaborativeMap.prototype.set;
@@ -99,10 +111,11 @@ function init(){
         (function (__key) {
           Object.defineProperty(obj1, __key, {
             get: function () {
-              var value = realtime.store.custom.objectRelationShips[obj1.mapId]['map'].get(__key).toString();
-              if(value === 'true')
+              var value = realtime.store.custom.objectRelationShips[obj1.mapId]['map'].get(__key);
+              var _value = value.toString();
+              if(_value === 'true')
                 return true;
-              if(value === 'false')
+              if(_value === 'false')
                 return false;
               return value;
             },
@@ -119,13 +132,6 @@ function init(){
             }
           });
         })(_key)
-        //初始化 custom对象的值
-        var value = obj.get(_key).toString();
-        if(value === 'true')
-          value = true;
-        if(value === 'false')
-          value = false;
-        obj1[_key] = value;
       }
       window.customObject = obj1;
       relations.instance = obj1;
